@@ -64,6 +64,10 @@ class Akatsuki:
         filename = bytes(filename).decode()
         return size, filename
 
+    @staticmethod
+    def get_maximum_size(imagepath: str) -> int:
+        return PixelManipulator(imagepath).get_maximum_size()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Steg some files!")
@@ -90,6 +94,9 @@ if __name__ == '__main__':
     elif args["extract"] or args["info"]:
         if not args["image"]:
             print("You must specify an image to open with --image")
+
+        capacity = Akatsuki.get_maximum_size(args["image"])
+        print("Capacity: ", (capacity-128)//1024, "kb")
 
         try:
             size, filename = Akatsuki.get_header(args["image"])

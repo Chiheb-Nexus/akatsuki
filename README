@@ -1,4 +1,17 @@
-Akatsuki
+Named after the assassin, Akatsuki, in Log Horizon.
 
-Outguessing stegging magic
+Outguessing stegging magic.
 
+Usage examples:
+
+# Create a new stegged file
+./akatsuki.py --inject --image original.png --secret secret.zip --output steggedfile.png
+
+
+# Extract a file
+./akatsuki.py --extract --image steggedfile.png
+
+
+# Look at a file header, as well as the maximum storage capacity of an image
+./akatsuki.py --info --image steggedfile.png
+./akatsuki.py --info --image original.png
