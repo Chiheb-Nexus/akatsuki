@@ -231,7 +231,7 @@ if __name__ == '__main__':
 
         try:
             size, filename = Akatsuki.get_header(args["image"])
-            print("Found file:", filename)
+            print("File:", filename)
             print("Size:", size//1024, "kb")
         except Exception as e:
             print("The file doesn't contain a valid header")
