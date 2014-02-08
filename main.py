@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import io
 import sys
 from PIL import Image
 from operator import mul
 from struct import pack, unpack
 from os.path import basename
+import argparse
 
 # todo: a way of...
 # [X] selecting an image
@@ -162,52 +162,85 @@ class PixelScraper:
 
 class Akatsuki:
     @staticmethod
-    def injectFile(originalPath: str, secretPath: str, outputPath: str):
+    def inject_file(imagepath: str, secretpath: str, outputpath: str):
 
-        secretFileName = basename(secretPath).encode()
+        secretfilename = basename(secretpath).encode()
 
-        with open(secretPath, "rb") as f:
-            secretData = f.read()
+        with open(secretpath, "rb") as f:
+            secretdata = f.read()
 
         header = bytearray(b"\0" * 128)
-        header[0:4] = pack("<I", len(secretData))
-        header[4:4 + len(secretFileName)] = secretFileName
-        header = header[:128] # cap anything that's too long
+        header[0:4] = pack("<I", len(secretdata))
+        header[4:4 + len(secretfilename)] = secretfilename
+        header = header[:128]  # cap anything that's too long
 
-        pixelManipulator = PixelManipulator(originalPath)
+        pixelmanipulator = PixelManipulator(imagepath)
 
-        maxFileSize = (pixelManipulator.get_maximum_size() - 128)
-        if maxFileSize < len(secretData):
-            print("The target container is too small for the secret. Maximum file size is", maxFileSize, "bytes")
+        maxfilesize = (pixelmanipulator.get_maximum_size() - 128)
+        if maxfilesize < len(secretdata):
+            print("The target container is too small for the secret. Maximum file size is", maxfilesize, "bytes")
             sys.exit(1)
 
-        bitFactory = BitFactory(secretData)
+        bitfactory = BitFactory(secretdata)
 
-        pixelManipulator.apply_bits(header, bitFactory)
-        pixelManipulator.save(outputPath)
+        pixelmanipulator.apply_bits(header, bitfactory)
+        pixelmanipulator.save(outputpath)
 
     @staticmethod
-    def extractFile(containerPath: str):
-        pixelScraper = PixelScraper(containerPath)
-        size, filename = pixelScraper.get_header()
+    def extract_file(imagepath: str):
+        pixelscraper = PixelScraper(imagepath)
+        size, filename = pixelscraper.get_header()
         filename = bytes(filename).decode()
-
-        print("Found file named %s, size %d kb" % (filename, size//1024))
-
-        data = pixelScraper.get_data()
+        data = pixelscraper.get_data()
         with open(filename, "wb+") as f:
             f.write(data)
 
+    @staticmethod
+    def get_header(imagepath: str) -> (int, str):
+        size, filename = PixelScraper(imagepath).get_header()
+        filename = bytes(filename).decode()
+        return size, filename
+
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Steg some files!")
 
-    akatsuki = Akatsuki()
+    parser.add_argument("--image",  type=str, default="")
+    parser.add_argument("--secret", type=str, default="")
+    parser.add_argument("--output", type=str, default="")
 
-    originalPath = "/home/kim/pictures/steg/original.png"
-    secretPath = "/home/kim/pictures/steg/secret.jpg"
-    outputPath = "/home/kim/pictures/steg/container.png"
+    parser.add_argument("--info",    action="store_const", const=True, default=False)
+    parser.add_argument("--extract", action="store_const", const=True, default=False)
+    parser.add_argument("--inject",  action="store_const", const=True, default=False)
 
-    #akatsuki.injectFile(originalPath, secretPath, outputPath)
+    args = vars(parser.parse_args())
 
-    akatsuki.extractFile(outputPath)
+    if sum(1 if args[name] else 0 for name in ('info', 'extract', 'inject')) != 1:
+        print("You must specify either --info, --extract, or --inject")
+        sys.exit(1)
+
+    if args["inject"]:
+        if not all(args[name] for name in ('image', 'secret', 'output')):
+            print("You must specify all of --image, --secret, and --output")
+        Akatsuki().inject_file(args["image"], args["secret"], args["output"])
+
+    elif args["extract"] or args["info"]:
+        if not args["image"]:
+            print("You must specify an image to open with --image")
+
+        try:
+            size, filename = Akatsuki.get_header(args["image"])
+            print("Found file:", filename)
+            print("Size:", size//1024, "kb")
+        except:
+            print("The file doesn't contain a valid header")
+            sys.exit(1)
+
+        if args["extract"]:
+            try:
+                Akatsuki().extract_file(args["image"])
+            except Exception as e:
+                print("Something went wrong:", e)
+
+
 
