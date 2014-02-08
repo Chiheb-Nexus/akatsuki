@@ -18,7 +18,7 @@ import argparse
 # [X] storing the read bits
 # [X] storing file info in a header
 # [X] readiung the header
-# [ ] Argparse!
+# [X] Argparse!
 # [ ] Validate headers... I'm sure you can make really weird things happen with a weird header.
 
 class BitFactory:
@@ -241,6 +241,3 @@ if __name__ == '__main__':
                 Akatsuki().extract_file(args["image"])
             except Exception as e:
                 print("Something went wrong:", e)
-
-
-
