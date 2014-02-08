@@ -114,3 +114,4 @@ if __name__ == '__main__':
                 Akatsuki().extract_file(args["image"])
             except Exception as e:
                 print("Something went wrong:", e)
+                sys.exit(1)
