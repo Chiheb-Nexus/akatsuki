@@ -72,9 +72,9 @@ class Akatsuki:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Steg some files!")
 
-    parser.add_argument("--image",  type=str, default="")
-    parser.add_argument("--secret", type=str, default="")
-    parser.add_argument("--output", type=str, default="")
+    parser.add_argument("-i", "--image",  type=str, default="")
+    parser.add_argument("-s", "--secret", type=str, default="")
+    parser.add_argument("-o", "--output", type=str, default="")
 
     parser.add_argument("--info",    action="store_const", const=True, default=False)
     parser.add_argument("--extract", action="store_const", const=True, default=False)
