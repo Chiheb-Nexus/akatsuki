@@ -49,6 +49,7 @@ class Akatsuki:
         pixelmanipulator.apply_bits(header, bitfactory)
         pixelmanipulator.save(outputpath)
 
+
     @staticmethod
     def extract_file(imagepath: str):
         pixelscraper = PixelScraper(imagepath)
@@ -58,11 +59,13 @@ class Akatsuki:
         with open(filename, "wb+") as f:
             f.write(data)
 
+
     @staticmethod
     def get_header(imagepath: str) -> (int, str):
         size, filename = PixelScraper(imagepath).get_header()
         filename = bytes(filename).decode()
         return size, filename
+
 
     @staticmethod
     def get_maximum_size(imagepath: str) -> int:

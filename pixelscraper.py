@@ -12,42 +12,42 @@ class PixelScraper:
 
 
     def get_header(self, length: int=128) -> (int, bytearray):
-        pixGen = self._pixelManipulator.get_pixel_generator()
+        pixgen = self._pixelManipulator.get_pixel_generator()
 
-        clearText = bytearray()
+        cleartext = bytearray()
 
-        for index, pixel in enumerate(pixGen):
+        for index, pixel in enumerate(pixgen):
             if index == length:
                 break
-            charValue = 0
+            charvalue = 0
             for i in reversed(range(4)):
-                charValue <<= 2
-                charValue += pixel[i] & 3
-            clearText.append(charValue)
+                charvalue <<= 2
+                charvalue += pixel[i] & 3
+            cleartext.append(charvalue)
 
-        size = unpack("<I", clearText[0:4])[0]
-        filename = clearText[4:].strip(b'\0')
+        size = unpack("<I", cleartext[0:4])[0]
+        filename = cleartext[4:].strip(b'\0')
 
         return size, filename
 
 
     def get_data(self):
         size, filename = self.get_header()
-        pixGen = self._pixelManipulator.get_pixel_generator()
+        pixgen = self._pixelManipulator.get_pixel_generator()
 
         # skip the header
         for i in range(128):
-            next(pixGen)
+            next(pixgen)
 
-        clearText = bytearray()
+        cleartext = bytearray()
 
-        for index, pixel in enumerate(pixGen):
+        for index, pixel in enumerate(pixgen):
             if index == size:
                 break
-            charValue = 0
+            charvalue = 0
             for i in reversed(range(4)):
-                charValue <<= 2
-                charValue += pixel[i] & 3
-            clearText.append(charValue)
+                charvalue <<= 2
+                charvalue += pixel[i] & 3
+            cleartext.append(charvalue)
 
-        return clearText
+        return cleartext

@@ -31,7 +31,7 @@ class PixelManipulator:
         Accepts a header and a bitFactory, applies everything in the bitfactory to the picture
         """
 
-        bitGen = bitFactory.get_bit_pair_generator(prefix=header)
+        bitgen = bitFactory.get_bit_pair_generator(prefix=header)
         pixels = list(self._image.getdata())
 
         running = True
@@ -39,16 +39,16 @@ class PixelManipulator:
             if not running:
                 break
 
-            newPixel = ()
+            newpixel = ()
             for i in range(4):
                 try:
-                    bit = next(bitGen)
-                    newPixel += (((pixel[i] >> 2) << 2) + bit, )
+                    bit = next(bitgen)
+                    newpixel += (((pixel[i] >> 2) << 2) + bit, )
                 except StopIteration:
                     running = False
-                    newPixel += (pixel[i], )
+                    newpixel += (pixel[i], )
 
-            pixels[index] = newPixel
+            pixels[index] = newpixel
 
         return pixels
 
