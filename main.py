@@ -21,6 +21,7 @@ import argparse
 # [X] Argparse!
 # [ ] Validate headers... I'm sure you can make really weird things happen with a weird header.
 
+
 class BitFactory:
     """
     Accepts anything that supports the file interface, and spits it back out, bit by bit. Literally.
@@ -232,7 +233,7 @@ if __name__ == '__main__':
             size, filename = Akatsuki.get_header(args["image"])
             print("Found file:", filename)
             print("Size:", size//1024, "kb")
-        except:
+        except Exception as e:
             print("The file doesn't contain a valid header")
             sys.exit(1)
 
